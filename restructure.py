@@ -5,13 +5,16 @@ outline = '''
 rpg/
 ├── app.py
 ├── requirements.txt
-├── rpg.db             # auto-created SQLite file
+├── models.py
+├── utils.py
+├── routes/
+│   ├── __init__.py
+│   ├── sessions.py
+│   ├── players.py
+│   └── api.py
 ├── templates/
-│   ├── index.html
-│   ├── new_session.html
-│   └── new_player.html
 └── static/
-    └── style.css
+
 '''
 
 def parse_outline(outline_text):

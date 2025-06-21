@@ -18,7 +18,7 @@
 
   <script>
     async function refreshLogs() {
-      const res = await fetch(`/api/session/{{ sid }}/logs`);
+      const res = await fetch(`/api/session/{{ scode }}/logs`);
       const data = await res.json();
       const c = document.getElementById("log-container");
       c.innerHTML = data.map(e => `
@@ -34,7 +34,7 @@
       if (data.length === 1) {
         ctrl.innerHTML = `
           <button id="start-btn" 
-                  hx-post="/api/session/{{ sid }}/start" 
+                  hx-post="/api/session/{{ scode }}/start" 
                   hx-swap="outerHTML"
                   hx-trigger="click"
                   >Start game</button>`;
