@@ -1,0 +1,35 @@
+/* static/style.css */
+body {
+  font-family: sans-serif;
+  margin: 0; padding: 0;
+  display: flex; height: 100vh;
+}
+
+#log-container {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #f7f7f7;
+}
+
+.log-entry {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  max-width: 70%;
+}
+
+.log-entry.dm {
+  background: #fff;
+  align-self: flex-start;
+}
+
+.log-entry.player {
+  background: #e0f7fa;
+  align-self: flex-end;
+}
+
+.content p {
+  margin: 0.4em 0;
+}
