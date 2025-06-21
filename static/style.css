@@ -1,35 +1,26 @@
 /* static/style.css */
-body {
-  font-family: sans-serif;
-  margin: 0; padding: 0;
-  display: flex; height: 100vh;
+
+/* player list bar */
+#player-list {
+  padding: 0.5rem 1rem;
+  background: #e8eaf6;
+  font-weight: bold;
 }
 
-#log-container {
-  flex: 1;
+/* message form */
+#message-form {
+  display: flex;
+  gap: 0.5rem;
   padding: 1rem;
-  overflow-y: auto;
-  background: #f7f7f7;
-}
-
-.log-entry {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  max-width: 70%;
-}
-
-.log-entry.dm {
   background: #fff;
-  align-self: flex-start;
+  border-top: 1px solid #ccc;
 }
-
-.log-entry.player {
-  background: #e0f7fa;
-  align-self: flex-end;
+#message-input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
 }
-
-.content p {
-  margin: 0.4em 0;
+#message-form button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
 }

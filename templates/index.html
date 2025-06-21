@@ -2,45 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Session {{ sid }} – Player {{ pid }}</title>
+  <title>Session {{ scode }} – Player {{ pcode }}</title>
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    /* quick button styling */
-    #start-btn { margin-top:1rem; padding:0.5em 1em; }
-  </style>
 </head>
 <body>
+
+  <!-- 1) Player list -->
+  <div id="player-list">Loading players…</div>
+
+  <!-- 2) Log -->
   <div id="log-container"></div>
 
-  <!-- Start-game button via htmx -->
+  <!-- 3) Controls / Start button -->
   <div id="controls"></div>
 
+  <!-- 4) Message entry -->
+  <form id="message-form">
+    <textarea id="message-input"
+              rows="2"
+              placeholder="Type your action…"
+              required></textarea>
+    <button type="submit">Send</button>
+  </form>
+
   <script>
+    async function fetchPlayers() {
+      const res = await fetch(`/api/session/{{ scode }}/players`);
+      const data = await res.json();
+      document.getElementById('player-list').innerHTML =
+        'Players: ' + data.map(p =>
+          p.code === '{{ pcode }}'
+            ? `<strong>${p.name}</strong>`
+            : p.name
+        ).join(', ');
+    }
+
     async function refreshLogs() {
       const res = await fetch(`/api/session/{{ scode }}/logs`);
       const data = await res.json();
       const c = document.getElementById("log-container");
       c.innerHTML = data.map(e => `
         <div class="log-entry ${e.role.toLowerCase()}">
-          <strong>${e.role}:</strong> <div class="content">${e.content}</div>
-        </div>
-      `).join("");
+          <strong>${e.role}:</strong>
+          <div class="content">${e.content}</div>
+        </div>`
+      ).join("");
       c.scrollTop = c.scrollHeight;
 
-      // if only the initial system message, show Start button
+      // start button logic
       const ctrl = document.getElementById("controls");
-      ctrl.innerHTML = '';
+      ctrl.innerHTML = "";
       if (data.length === 1) {
         ctrl.innerHTML = `
-          <button id="start-btn" 
-                  hx-post="/api/session/{{ scode }}/start" 
+          <button id="start-btn"
+                  hx-post="/api/session/{{ scode }}/start"
                   hx-swap="outerHTML"
-                  hx-trigger="click"
-                  >Start game</button>`;
+                  hx-trigger="click">
+            Start game
+          </button>`;
       }
     }
-    window.addEventListener("DOMContentLoaded", refreshLogs);
+
+    // wire up message form
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchPlayers();
+      refreshLogs();
+
+      document.getElementById('message-form')
+              .addEventListener('submit', async e => {
+        e.preventDefault();
+        const inp = document.getElementById('message-input');
+        const text = inp.value.trim();
+        if (!text) return;
+        await fetch(`/api/session/{{ scode }}/player/{{ pcode }}/message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ content: text })
+        });
+        inp.value = '';
+        refreshLogs();
+      });
+    });
   </script>
 </body>
 </html>
