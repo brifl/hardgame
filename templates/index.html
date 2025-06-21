@@ -1,29 +1,46 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RPG Log Viewer</title>
+  <title>Session {{ sid }} – Player {{ pid }}</title>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* quick button styling */
+    #start-btn { margin-top:1rem; padding:0.5em 1em; }
+  </style>
 </head>
 <body>
   <div id="log-container"></div>
 
+  <!-- Start-game button via htmx -->
+  <div id="controls"></div>
+
   <script>
-    async function fetchLogs() {
-      const res = await fetch("/api/logs");
+    async function refreshLogs() {
+      const res = await fetch(`/api/session/{{ sid }}/logs`);
       const data = await res.json();
-      const container = document.getElementById("log-container");
-      container.innerHTML = data.map(entry => `
-        <div class="log-entry ${entry.role.toLowerCase()}">
-          <strong>${entry.role}:</strong>
-          <div class="content">${entry.content}</div>
+      const c = document.getElementById("log-container");
+      c.innerHTML = data.map(e => `
+        <div class="log-entry ${e.role.toLowerCase()}">
+          <strong>${e.role}:</strong> <div class="content">${e.content}</div>
         </div>
       `).join("");
-      // keep scroll at bottom
-      container.scrollTop = container.scrollHeight;
+      c.scrollTop = c.scrollHeight;
+
+      // if only the initial system message, show Start button
+      const ctrl = document.getElementById("controls");
+      ctrl.innerHTML = '';
+      if (data.length === 1) {
+        ctrl.innerHTML = `
+          <button id="start-btn" 
+                  hx-post="/api/session/{{ sid }}/start" 
+                  hx-swap="outerHTML"
+                  hx-trigger="click"
+                  >Start game</button>`;
+      }
     }
-    window.addEventListener("DOMContentLoaded", fetchLogs);
+    window.addEventListener("DOMContentLoaded", refreshLogs);
   </script>
 </body>
 </html>

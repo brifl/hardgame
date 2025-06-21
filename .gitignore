@@ -122,3 +122,5 @@ dmypy.json
 
 /dev
 /outputs
+
+.db

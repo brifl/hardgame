@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Join Session {{ session.id }}</title></head>
+<body>
+  <h2>Session #{{ session.id }}: Enter your player name</h2>
+  {% if error %}
+    <p style="color:red">{{ error }}</p>
+  {% endif %}
+  <form method="post">
+    <input name="name" placeholder="Your name" required maxlength="20">
+    <button type="submit">Join Game</button>
+  </form>
+</body>
+</html>
