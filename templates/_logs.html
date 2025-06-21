@@ -1,0 +1,6 @@
+{% for e in entries %}
+  <div class="log-entry {{ e.role.lower() }}">
+    <strong>{{ e.role }}:</strong>
+    <div class="content">{{ e.content|safe }}</div>
+  </div>
+{% endfor %}
