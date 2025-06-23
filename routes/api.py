@@ -73,3 +73,40 @@ def stream_logs(scode):
 
     return Response(stream_with_context(generate()),
                     mimetype='text/event-stream')
+
+@api_bp.route('/session/<string:scode>/turn', methods=['POST'])
+def do_turn(scode):
+    """
+    Handle one full “turn”: save the player’s action and
+    then enqueue a DM placeholder reply.
+    """
+    sess = Session.query.filter_by(code=scode).first_or_404()
+
+    # get player code + content from the form
+    pcode   = request.form.get('pcode',    '').strip()
+    content = request.form.get('content',  '').strip()
+    if not (pcode and content):
+        abort(400, "Missing pcode or content")
+
+    # validate player
+    player = Player.query.filter_by(code=pcode, session_id=sess.id).first_or_404()
+
+    # 1) Save the player’s message
+    player_entry = LogEntry(
+        role=player.name,
+        content=f'<p>{content}</p>',
+        session_id=sess.id
+    )
+    db.session.add(player_entry)
+
+    # 2) Placeholder DM response
+    dm_text = f'<p>The DM ponders your action “{content}”…</p>'
+    dm_entry = LogEntry(
+        role='DM',
+        content=dm_text,
+        session_id=sess.id
+    )
+    db.session.add(dm_entry)
+
+    db.session.commit()
+    return ("", 204)

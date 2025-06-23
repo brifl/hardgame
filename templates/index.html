@@ -48,11 +48,14 @@
                     const text = inp.value.trim();
                     if (!text) return;
                     await fetch(
-                        `/api/session/{{ scode }}/player/{{ pcode }}/message`,
+                        `/api/session/{{ scode }}/turn`,
                         {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams({ content: text })
+                            body: new URLSearchParams({
+                                pcode: "{{ pcode }}",
+                                content: text
+                            })
                         }
                     );
                     inp.value = '';

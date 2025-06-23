@@ -25,6 +25,10 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+    # add this under create_app() before return
+    for rule in app.url_map.iter_rules():
+        print(rule)
+
     return app
 
 if __name__ == "__main__":
